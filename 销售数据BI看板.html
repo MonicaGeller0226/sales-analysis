@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>理想汽车 · 2026年7月 销售数据 BI 看板</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="_BiData.js"></script>
+<style>
+:root{--bg:#0f1420;--card:#181f30;--card2:#202a3f;--line:#2a3448;--txt:#e7edf7;--mut:#94a4bd;
+--a:#3b82f6;--a2:#22d3ee;--ok:#34d399;--wr:#fbbf24;--bd:#f87171;--pu:#a78bfa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;padding:16px 18px 60px}
+h1{font-size:20px;font-weight:800}
+.tb{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.sub{color:var(--mut);font-size:12px;line-height:1.7;margin-top:4px}
+.fl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:8px 12px}
+.fl b{color:var(--mut);font-size:12px}
+select{background:#212b40;color:var(--txt);border:1px solid var(--line);border-radius:7px;padding:5px 7px;font-size:13px;cursor:pointer}
+.rst{background:0 0;border:1px dashed #5f6d89;color:#b9c5d8;border-radius:7px;padding:5px 11px;cursor:pointer;font-size:12px}
+.rst:hover{border-color:var(--a);color:var(--a)}
+.krg{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:11px;margin-bottom:13px}
+.k{background:linear-gradient(150deg,var(--card),#1e2740);border:1px solid var(--line);border-radius:13px;padding:13px 15px;position:relative;overflow:hidden}
+.k .lb{color:var(--mut);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.k .lb .e{color:var(--wr);font-size:10px}
+.k .v{font-size:25px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.k .v s{font-size:13px;color:var(--a2);margin-right:2px;text-decoration:none}
+.k .dl{font-size:11px;color:var(--mut);margin-top:3px;line-height:1.4}
+.g{position:absolute;width:100px;height:100px;border-radius:50%;filter:blur(44px);opacity:.3;right:-14px;top:-16px}
+.gd{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.cd{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px 10px}
+.cd h3{font-size:14px;font-weight:700}
+.cd .nt{color:var(--mut);font-size:12px;line-height:1.7;margin-top:6px}
+.hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.hd .hi{color:var(--mut);font-size:11px;flex:1;text-align:right}
+.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s7{grid-column:span 7}.s8{grid-column:span 8}
+.cw{position:relative}.h28{height:272px}.h19{height:182px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:5px 6px;text-align:right;border-bottom:1px solid #232d42;white-space:nowrap;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{color:#9cb0cd;font-weight:600;font-size:11px;position:sticky;top:0;background:var(--card)}
+td.rk{cursor:pointer}td.rk:hover{color:#9ee8f6}
+.sc{max-height:278px;overflow-y:auto}
+.sc::-webkit-scrollbar{width:8px}.sc::-webkit-scrollbar-thumb{background:#2d3956;border-radius:4px}
+.hm td{padding:3px}.hm .c{min-width:62px;padding:11px 5px;border-radius:7px;font-weight:700;font-size:14px;text-align:center}
+.lst .rw{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid #232d42;cursor:pointer;border-radius:7px}
+.lst .rw:hover{background:#202941}.lst .rw:last-child{border-bottom:none}
+.lst .rw.sell{background:rgba(34,211,238,.09);box-shadow:inset 0 0 0 1px var(--a2)}
+.lst .ix{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex:none;background:#3d4a63;color:#fff}
+.lst .ix.g1{background:#eab308}.lst .ix.g2{background:#9aa7b8}.lst .ix.g3{background:#c07e3c}
+.lst .nm{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
+.lst .nm b{font-weight:700}
+.lst .nm i{display:block;font-style:normal;color:var(--mut);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lst .mt{color:var(--a2);font-size:12px;font-weight:600;flex:none}
+.lst .cn{font-weight:800;flex:none}
+.lst .bg2{width:64px;height:6px;background:#26314d;border-radius:4px;overflow:hidden;flex:none}
+.lst .bg2 span{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--a2))}
+.hm th,.hm td{background:none}
+.bd{font-size:10.5px;padding:1px 7px;border-radius:20px;font-weight:600}
+.bd.red{background:rgba(248,113,113,.15);color:var(--bd)}
+.bd.gr{background:rgba(52,211,153,.15);color:var(--ok)}
+.bd.ye{background:rgba(251,191,36,.16);color:var(--wr)}
+.bd.cy{background:rgba(34,211,238,.13);color:var(--a2)}
+.ft{margin-top:20px;color:var(--mut);font-size:11.5px;text-align:center;line-height:2;border-top:1px solid #222c40;padding-top:12px}
+.ok{color:var(--ok)}.bad{color:var(--bd)}.wr{color:var(--wr)}.a2{color:var(--a2)}
+@media(max-width:1120px){.s4,.s5,.s6,.s7,.s8{grid-column:span 12}}
+</style>
+</head>
+<body>
+
+<div class="tb">
+  <div>
+    <h1>🚗 理想汽车 · 销售数据 BI 看板 <span style="font-size:13px;color:var(--mut)">2026年7月</span></h1>
+    <div class="sub">553 条记录 · 7 城 7 店 · 5 车型 · 11 位顾问 · 数据范围 07-01 ~ 07-28<br>数据源自 <b>销售数据分析.xlsx</b>，分析口径见《销售数据分析报告.md》。所有图表支持交互与筛选联动。</div>
+  </div>
+  <div class="fl">
+    <b>城市</b><select id="fCity"><option value="">全部</option></select>
+    <b>车型</b><select id="fVeh"><option value="">全部</option></select>
+    <b>顾问</b><select id="fAdv"><option value="">全部</option></select>
+    <b>周次</b><select id="fWeek"><option value="">全部</option></select>
+    <button class="rst" id="rst">↺ 重置</button>
+  </div>
+</div>
+
+<div class="krg">
+  <div class="k"><div class="lb">总成交台数<span class="e">月目标500</span></div><div class="v"><span id="k-sold">0</span><s>台</s></div><div class="dl" id="d-sold"></div><i class="g" style="background:var(--a)"></i></div>
+  <div class="k"><div class="lb">总线索量</div><div class="v"><span id="k-lead">0</span><s>条</s></div><div class="dl" id="d-lead"></div><i class="g" style="background:#22d3ee"></i></div>
+  <div class="k"><div class="lb">到店人数<span class="e">含线索外</span></div><div class="v"><span id="k-visit">0</span><s>人</s></div><div class="dl" id="d-visit"></div><i class="g" style="background:var(--pu)"></i></div>
+  <div class="k"><div class="lb">线索转化率</div><div class="v"><span id="k-lr">0</span><s>%</s></div><div class="dl" id="d-lr"></div><i class="g" style="background:var(--ok)"></i></div>
+  <div class="k"><div class="lb">到店转化率<span class="e">★瓶颈</span></div><div class="v"><span id="k-vr">0</span><s>%</s></div><div class="dl" id="d-vr"></div><i class="g" style="background:var(--wr)"></i></div>
+</div>
+
+<div class="gd">
+
+  <div class="cd s8">
+    <div class="hd"><h3>📈 每日销售趋势</h3><div class="hi">柱=成交 · 线=线索/到店</div></div>
+    <div class="cw h28"><canvas id="cTrend"></canvas></div>
+    <div class="nt" id="nTrend"></div>
+  </div>
+
+  <div class="cd s4">
+    <div class="hd"><h3>🗓️ 分周成交</h3><div class="hi" id="wGrow"></div></div>
+    <div class="cw h28"><canvas id="cWeek"></canvas></div>
+    <div class="nt">周度成长 91→121→122→130 台（W1→W4 约 +43%）。W5 止于 7-28，为不完整周。</div>
+  </div>
+
+  <div class="cd s4">
+    <div class="hd"><h3>🚙 车型销量结构</h3><div class="hi">点图例隐藏</div></div>
+    <div class="cw h28"><canvas id="cVeh"></canvas></div>
+    <div class="nt" id="nVeh"></div>
+  </div>
+
+  <div class="cd s4">
+    <div class="hd"><h3>🏙️ 城市销量排行</h3><div class="hi">点柱→筛选城市</div></div>
+    <div class="cw h28"><canvas id="cCity"></canvas></div>
+    <div class="nt" id="nCity"></div>
+  </div>
+
+  <div class="cd s4">
+    <div class="hd"><h3>🎯 顾问产能 × 转化</h3><div class="hi">横=成交 · 纵=线转</div></div>
+    <div class="cw h28"><canvas id="cSc"></canvas></div>
+    <div class="nt" id="nSc"></div>
+  </div>
+
+  <div class="cd s6">
+    <div class="hd"><h3>🔲 城市 × 车型 成交热力</h3><div class="hi">颜色以行内最大车型归一</div></div>
+    <div class="sc" style="height:280px"><table class="hm" id="tHeat"></table></div>
+    <div class="nt">L7/L8 双主力；<b class="bad">MEGA 全线 0 成交</b>（178 线索/576 到店，全月疑点）；L9 集中上海(28)/北京(21)。</div>
+  </div>
+
+  <div class="cd s6">
+    <div class="hd"><h3>🔻 转化漏斗</h3><div class="hi">到店&gt;线索（重叠）</div></div>
+    <div class="cw h19"><canvas id="cFun"></canvas></div>
+    <div class="nt">瓶颈在 <b class="wr">“到店→成交”</b>≈4.35%。到店即最大销量池：转化每+1pp≈<b class="a2">多 113 台</b>。到店优化 &gt; 盲目投放线索。</div>
+  </div>
+
+  <div class="cd s7">
+    <div class="hd"><h3>🏅 销售顾问业绩排行</h3><div class="hi" id="advhi"></div></div>
+    <div class="sc lst" id="advList" style="height:308px"></div>
+    <div class="nt" id="nAdv"></div>
+  </div>
+
+  <div class="cd s5">
+    <div class="hd"><h3>🗂️ 分城市明细</h3><div class="hi">线转按成交降序 · 点行筛选</div></div>
+    <div class="sc" style="height:308px"><table id="tCity"></table></div>
+    <div class="nt" id="nCityTab"></div>
+  </div>
+
+</div>
+
+<div class="ft">
+  数据源：销售数据分析.xlsx（清洗后明细 553 条 · 透视见 13 个 Sheet）　·　口径与建议见《销售数据分析报告.md》
+  <br>顶部下拉全局联动；点“城市柱 / 城市明细行 / 顾问行”可二次下钻，再点或“重置”还原。
+  ⚠️ 线索→到店→成交为<b>部分重叠漏斗</b>，各环转化率不宜直接相乘。
+</div>
+
+<script>
+/* 独立渲染脚本 —— 供 销售数据BI看板.html 使用 */
+var BID = window.BIDATA;
+var rows = BID.rows;                 /* r: {d,c,s,a,v,sold,lead,visit,wk,w} */
+function $(x){ return document.getElementById(x); }
+function fmt(n){ n=Number(n)||0; return n.toLocaleString('zh-CN'); }
+function pcr(a,b){ return b>0 ? 100*a/b : 0; }
+
+var CITYC = { '上海':'#3ecf8e','北京':'#4c8fff','成都':'#2fd6ec','深圳':'#fbbf24','广州':'#fb7185','杭州':'#a78bfa','重庆':'#5aa7fa' };
+var VPAL  = ['#3b82f6','#22d3ee','#a78bfa','#f472b6','#9aa5b8'];
+var VORD  = ['L7','L8','L9','L6','MEGA'];
+var WCOL  = { W1:'#3b82f6', W2:'#4d85f6', W3:'#6d9cf8', W4:'#8fb6fb', W5:'#5b667f' };
+var FONT  = { color:'#c9d5e8', boxWidth:13, boxHeight:13, padding:8 };
+var charts = {};
+
+/* 通用：销毁并用新配置绘制 */
+function draw(id, cfg){
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart($(id), cfg);
+}
+/* 通用坐标轴（单 y） */
+function axesY(){
+  return {
+    scales:{ x:{ ticks:{color:'#94a4bd'}, grid:{display:false} },
+             y:{ ticks:{color:'#94a4bd'}, grid:{color:'#253046'} } }
+  };
+}
+
+/* ---------- 状态 ---------- */
+var FC='', FV='', FA='', FW='';      /* 城市/车型/顾问/周 */
+var advDrill = null;                  /* 顾问下钻名 */
+function allSel(){ return FC===''&&FV===''&&FA===''&&FW===''; }
+function inSel(r){ return (!FC||r.c===FC)&&(!FV||r.v===FV)&&(!FA||r.a===FA)&&(!FW||r.w===FW); }
+function fRows(){ return rows.filter(inSel); }
+
+/* ---------- KPI ---------- */
+function kpi(){
+  var f=fRows();
+  var s=0,l=0,v=0; f.forEach(function(r){ s+=r.sold; l+=r.lead; v+=r.visit; });
+  $('k-sold').textContent=fmt(s);
+  $('k-lead').textContent=fmt(l);
+  $('k-visit').textContent=fmt(v);
+  $('k-lr').textContent=pcr(s,l).toFixed(1);
+  $('k-vr').textContent=pcr(s,v).toFixed(1);
+  if (allSel()){
+    $('d-sold').textContent='周度 91→130 · 月目标500';
+    $('d-lead').textContent='上海线索转化最高 16.0%';
+    $('d-visit').textContent='到店＝最大潜在销量池';
+    $('d-lr').innerHTML='参照 13.3%，上海16.0 / 广州9.3';
+    $('d-vr').innerHTML='到店转化 +1pp ≈ 多成交 113 台';
+  } else {
+    $('d-sold').innerHTML='占全月 <b class="ok">'+(100*s/490).toFixed(1)+'%</b>';
+    $('d-lead').textContent='占全月 '+(100*l/3692).toFixed(1)+'% · 基准3,692';
+    $('d-visit').textContent='占全月 '+(100*v/11263).toFixed(1)+'%';
+    $('d-lr').innerHTML='' + diffTxt(pcr(s,l), 13.27) + 'pp 于基准13.3%';
+    $('d-vr').innerHTML='' + diffTxt(pcr(s,v), 4.35) + 'pp 于基准4.35%';
+  }
+}
+function diffTxt(a,b){ return (a-b>=0?'+':'')+(a-b).toFixed(1); }
+
+/* ---------- 每日趋势 ---------- */
+function trend(){
+  var f=fRows(), m={};
+  f.forEach(function(r){ if(!m[r.d]) m[r.d]={s:0,l:0,v:0}; var o=m[r.d]; o.s+=r.sold; o.l+=r.lead; o.v+=r.visit; });
+  var ks=Object.keys(m).sort();
+  draw('cTrend', {
+    data: {
+      labels: ks.map(function(dd){return dd.slice(5); }),
+      datasets: [
+        { type:'bar',  label:'成交(台)', data:ks.map(function(dd){return m[dd].s;}), backgroundColor:'rgba(59,130,246,.8)', borderRadius:3, yAxisID:'y',  order:3 },
+        { type:'line', label:'线索',     data:ks.map(function(dd){return m[dd].l;}), borderColor:'#22d3ee', borderWidth:2, pointRadius:1.6, tension:.35, yAxisID:'y1', order:1 },
+        { type:'line', label:'到店',     data:ks.map(function(dd){return m[dd].v;}), borderColor:'#a78bfa', borderWidth:2, pointRadius:1.6, tension:.35, yAxisID:'y1', order:2 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ labels:FONT } },
+      scales:{
+        x:{ ticks:{color:'#94a4bd',autoSkip:true,maxTicksLimit:16,maxRotation:0}, grid:{display:false} },
+        y:{ position:'left',  title:{display:true,text:'成交台',color:'#8fa0b8'}, ticks:{color:'#94a4bd'}, grid:{color:'#253046'} },
+        y1:{ position:'right', title:{display:true,text:'线索/到店',color:'#8fa0b8'}, ticks:{color:'#94a4bd'}, grid:{display:false} }
+      }
+    }
+  });
+  var tot=0; ks.forEach(function(dd){ tot+=m[dd].s; });
+  $('nTrend').innerHTML='当前累计成交 <b class="ok">'+fmt(tot)+'</b> 台 · 三条曲线整体缓升无断层，线索是成交先行指标'+(FC?('（聚焦：'+FC+'）'):'')+'。';
+}
+
+/* ---------- 分周 ---------- */
+function week(){
+  var f=fRows(), m={};
+  f.forEach(function(r){ m[r.w]=(m[r.w]||0)+r.sold; });
+  var labs=['W1','W2','W3','W4','W5'].filter(function(w){ return m[w]!==undefined; });
+  draw('cWeek', {
+    type:'bar',
+    data:{ labels:labs, datasets:[{ label:'成交台数', data:labs.map(function(w){return m[w];}),
+      backgroundColor:labs.map(function(w){ return WCOL[w]||'#3b82f6'; }), borderRadius:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:axesY().scales }
+  });
+  if (m.W1 && m.W4){ $('wGrow').innerHTML='W1→W4 <b class="a2">+'+(100*(m.W4-m.W1)/m.W1).toFixed(0)+'%</b>'; }
+  else $('wGrow').textContent='';
+}
+
+/* ---------- 车型结构（环形） ---------- */
+function veh(){
+  var f=fRows(), m={};
+  f.forEach(function(r){ m[r.v]=(m[r.v]||0)+r.sold; });
+  var labs=VORD.filter(function(v){ return (m[v]||0)>0; }).sort(function(a,b){ return m[b]-m[a]; });
+  var data=labs.map(function(v){ return m[v]; });
+  var tot=data.reduce(function(a,b){return a+b;},0)||1;
+  draw('cVeh', {
+    type:'doughnut',
+    data:{ labels:labs, datasets:[{ data:data, backgroundColor:VPAL, borderColor:'#18202f', borderWidth:2, hoverOffset:7 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'56%',
+      plugins:{ legend:{ position:'right', labels:{color:'#c9d5e8',boxWidth:11,boxHeight:11,padding:8,font:{size:12}} },
+        tooltip:{ callbacks:{ label:function(c){ return ' '+c.label+': '+fmt(c.parsed)+' 台 · '+(100*c.parsed/tot).toFixed(1)+'%'; } } } } }
+  });
+  var l7=m.L7||0, l8=m.L8||0;
+  if (allSel()){
+    $('nVeh').innerHTML='L7+L8 合计 <b class="ok">'+(100*(l7+l8)/490).toFixed(0)+'%</b>（L7 '+fmt(l7)+' / L8 '+fmt(l8)+'）走量引擎，转化亦高于均值；L9 高端靠头部城市，L6 疲软仅 14 台，<b class="bad">MEGA 0 成交</b>（178 线索 / 576 到店）全月最大疑点。';
+  } else {
+    var s=f.reduce(function(a,r){return a+r.sold;},0);
+    $('nVeh').innerHTML='当前 '+fmt(s)+' 台中 L7+L8 占 '+(s?(100*(l7+l8)/s).toFixed(1):0)+'%。';
+  }
+}
+
+/* ---------- 城市排行（柱） ---------- */
+function cityRank(){
+  var f=fRows(), m={};
+  f.forEach(function(r){ if(!m[r.c]) m[r.c]={s:0,l:0,v:0}; var o=m[r.c]; o.s+=r.sold; o.l+=r.lead; o.v+=r.visit; });
+  var ks=Object.keys(m).sort(function(a,b){ return m[b].s-m[a].s; });
+  draw('cCity', {
+    type:'bar',
+    data:{ labels:ks, datasets:[{ label:'成交台数',
+      data:ks.map(function(c){ return m[c].s; }),
+      backgroundColor:ks.map(function(c){ return FC && FC!==c ? '#3a4a68' : (CITYC[c]||'#3b82f6'); }),
+      borderRadius:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      onClick:function(e,el){ if(el.length){ setOrToggle('FC', ks[el[0].index]); syncSel(); runAll(); } },
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(c){ var d=m[ks[c.dataIndex]]; return '成交 '+d.s+' 台 · 线转 '+pcr(d.s,d.l).toFixed(1)+'%'; } } } },
+      scales:axesY().scales }
+  });
+  var sh=m['上海'], gz=m['广州'], bj=m['北京'];
+  if (allSel()){
+    $('nCity').innerHTML='上海 <b class="ok">'+fmt(sh?sh.s:0)+'</b> 台领跑（线转 16.0% 最高）&nbsp;·&nbsp;京沪合计约占 48%（'+(bj?bj.s:0)+'+'+(sh?sh.s:0)+'）&nbsp;·&nbsp;<b class="wr">广州线转 '+(gz?pcr(gz.s,gz.l).toFixed(1):'')+'% 垫底</b>（高线索低转化，需治理）。';
+  } else {
+    $('nCity').innerHTML=(FC?'聚焦：<b class="a2">'+FC+'</b>，点柱可切换/取消。':'当前筛选下的城市分布。');
+  }
+}
+
+/* ---------- 顾问散点 ---------- */
+function scat(){
+  var f=fRows(), m={};
+  f.forEach(function(r){ if(!m[r.a]) m[r.a]={s:0,l:0,v:0}; var o=m[r.a]; o.s+=r.sold; o.l+=r.lead; o.v+=r.visit; });
+  var list=Object.keys(m);
+  var pts=list.map(function(a){ var o=m[a]; return { x:o.s, y:+pcr(o.s,o.l).toFixed(1), r:3+Math.sqrt(o.v)/22, a:a, lr:+pcr(o.s,o.l).toFixed(1), vr:+pcr(o.s,o.v).toFixed(1) }; });
+  draw('cSc', {
+    type:'bubble',
+    data:{ datasets:[{ label:'销售顾问', data:pts,
+      backgroundColor:pts.map(function(p){ return p.a===FA?'#fbbf24':'rgba(34,211,238,.50)'; }),
+      borderColor:pts.map(function(p){ return p.a===FA?'#fbbf24':'#22d3ee'; }), borderWidth:1 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      onClick:function(e,el){ if(el.length){ var a=el[0].element._index; if(a!=null && pts[a]){ setOrToggle('FA', pts[a].a); syncSel(); runAll(); } } },
+      scales:{ x:{ title:{display:true,text:'成交(台)',color:'#8fa0b8'}, ticks:{color:'#94a4bd'}, grid:{color:'#253046'} },
+               y:{ title:{display:true,text:'线索转化率 %',color:'#8fa0b8'}, ticks:{color:'#94a4bd'}, grid:{color:'#253046'} } },
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ title:function(it){ return it[0].raw.a; },
+        label:function(it){ var p=it.raw; return ['成交 '+p.x+' 台','线索转化 '+p.lr+'%','到店转化 '+p.vr+'%']; } } } } }
+  });
+  if (allSel()){ $('nSc').innerHTML='右上为标杆（<b>王浩</b> 91台/线转18.1%），张磊/周强=稳健主力；<b class="bad">吴敏、郑琪 0 成交</b>（各 80/132 线索）位于左下。头部集中、分化显著。'; }
+  else { $('nSc').innerHTML=(FA?'聚焦：<b class="a2">'+FA+'</b>，点气泡可换顾问。':'当前范围顾问分布。'); }
+}
+
+/* ---------- 漏斗 ---------- */
+function funn(){
+  var f=fRows(), l=0,v=0,s=0;
+  f.forEach(function(r){ l+=r.lead; v+=r.visit; s+=r.sold; });
+  var maxv=Math.max(l,v,s)||1;
+  draw('cFun', {
+    type:'bar',
+    data:{ labels:['线索量','到店人数','成交台数'], datasets:[{ label:'人数', data:[l,v,s],
+      backgroundColor:['#3b82f6','#22d3ee','#a78bfa'], borderRadius:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      scales:{ x:{ max:maxv*1.05, ticks:{color:'#94a4bd',callback:function(t){return fmt(t);}}, grid:{color:'#253046'} },
+               y:{ ticks:{color:'#c9d5e8',font:{size:12}}, grid:{display:false} } },
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(o){ return ' '+fmt(o.parsed); } } } } }
+  });
+}
+
+/* ---------- 城市×车型热力表 ---------- */
+function heat(){
+  var f=fRows(), m={};
+  f.forEach(function(r){ if(!m[r.c]) m[r.c]={}; m[r.c][r.v]=(m[r.c][r.v]||0)+r.sold; });
+  var cities=Object.keys(m).sort(function(a,b){
+    var A=VORD.reduce(function(s,v){return s+(m[a][v]||0);},0);
+    var B=VORD.reduce(function(s,v){return s+(m[b][v]||0);},0);
+    return B-A; });
+  var h='<table><tr><th>城市</th>';
+  VORD.forEach(function(v){ h+='<th style="text-align:center">'+v+'</th>'; });
+  h+='<th style="text-align:center">合计</th></tr>';
+  cities.forEach(function(c){
+    var vals=VORD.map(function(v){ return m[c][v]||0; });
+    var rowmax=Math.max.apply(null,vals)||1;
+    var tot=0; vals.forEach(function(x){tot+=x;});
+    h+='<tr><td style="font-weight:600">'+c+'</td>';
+    vals.forEach(function(val,i){
+      var v=VORD[i];
+      if (v==='MEGA'){ h+='<td><div class="c" style="background:rgba(248,113,113,.08);color:#6b7a93">'+val+'</div></td>'; }
+      else if (!val){ h+='<td><div class="c" style="background:rgba(30,41,59,.45)">0</div></td>'; }
+      else { var al=(0.10+0.90*val/rowmax).toFixed(2); h+='<td><div class="c" style="background:rgba(59,130,246,'+al+')">'+val+'</div></td>'; }
+    });
+    h+='<td style="text-align:center;font-weight:800">'+tot+'</td></tr>';
+  });
+  h+='</table>';
+  $('tHeat').innerHTML=h||'<div class="nt">无匹配记录</div>';
+}
+
+/* ---------- 顾问排行 + 城市下钻 ---------- */
+function advRank(){
+  var advhi=$('advhi');
+  if (advDrill){ advhi.innerHTML='正在查看 <b class="a2">'+advDrill+'</b> 的城市构成 · 点↩或行返回'; }
+  else { advhi.textContent=FA?('已筛：'+FA+' · 点普通顾问行可在筛选中切换；全量点行=城市下钻'):'点击任意行查看其“各城市成交”下钻'; }
+
+  if (advDrill){
+    var m={}; fRows().forEach(function(r){ if(r.a===advDrill){ m[r.c]=(m[r.c]||0)+r.sold; } });
+    var ks=Object.keys(m).sort(function(a,b){ return m[b]-m[a]; });
+    var hh='';
+    ks.forEach(function(c,i){ var ix=medal(i+1);
+      hh+='<div class="rw" onclick="drillBack()"><span class="ix'+ix+'">'+(i+1)+'</span><div class="nm"><b>'+c+'</b><i>该市成交 '+fmt(m[c])+' 台</i></div><div class="cn">'+fmt(m[c])+'</div></div>'; });
+    if (!ks.length) hh='<div class="rw"><div class="nm">该顾问在当前筛选下无成交</div></div>';
+    hh+='<div class="rw" onclick="drillBack()"><span class="ix">↩</span><div class="nm"><b>返回全部顾问</b></div></div>';
+    $('advList').innerHTML=hh; return;
+  }
+
+  var m2={};
+  fRows().forEach(function(r){ var a=r.a; if(!m2[a]) m2[a]={s:0,l:0,v:0,cs:{}}; var o=m2[a]; o.s+=r.sold; o.l+=r.lead; o.v+=r.visit; o.cs[r.c]=1; });
+  var list=Object.keys(m2).sort(function(a,b){ return m2[b].s-m2[a].s; });
+  var maxs=Math.max.apply(null,list.map(function(a){return m2[a].s;}))||1;
+  var hh2='';
+  list.forEach(function(a,i){ var d=m2[a], cs=Object.keys(d.cs).join('、');
+    hh2+='<div class="rw'+(a===FA?' sell':'')+'" onclick="advClick(\''+a+'\')">';
+    hh2+='<span class="ix'+medal(i+1)+'">'+(i+1)+'</span>';
+    hh2+='<div class="nm"><b>'+a+'</b><i>'+cs+' · 线转 '+pcr(d.s,d.l).toFixed(1)+'% · 到店转 '+pcr(d.s,d.v).toFixed(1)+'%</i></div>';
+    hh2+='<div class="bg2"><span style="width:'+Math.round(100*d.s/maxs)+'%"></span></div>';
+    hh2+='<div class="cn">'+fmt(d.s)+'</div></div>'; });
+  $('advList').innerHTML=hh2||'<div class="nt">无匹配记录</div>';
+}
+function medal(i){ return i===1?' g1':(i===2?' g2':(i===3?' g3':'')); }
+
+/* ---------- 城市明细表 ---------- */
+function cTab(){
+  var f=fRows(), m={};
+  f.forEach(function(r){ if(!m[r.c]) m[r.c]={s:0,l:0,v:0,vc:{}}; var o=m[r.c]; o.s+=r.sold; o.l+=r.lead; o.v+=r.visit; o.vc[r.v]=1; });
+  var ks=Object.keys(m).sort(function(a,b){ return m[b].s-m[a].s; });
+  var h='<table><tr><th>城市</th><th>成交</th><th>线索</th><th>到店</th><th>线转</th><th>车型</th><th>质量</th></tr>';
+  ks.forEach(function(c){ var d=m[c];
+    var lr=pcr(d.s,d.l);
+    var bb=lr>=15?'<span class="bd gr">优</span>':(lr>=11?'<span class="bd ye">中</span>':'<span class="bd red">低</span>');
+    var nv=Object.keys(d.vc).length;
+    h+='<tr><td class="rk" onclick="cityRow(\''+c+'\')">'+c+'</td><td>'+d.s+'</td><td>'+fmt(d.l)+'</td><td>'+fmt(d.v)+'</td><td>'+lr.toFixed(1)+'%</td><td>'+nv+'</td><td>'+bb+'</td></tr>'; });
+  $('tCity').innerHTML=h||'<tr><td>无匹配</td></tr>';
+  if (allSel()){ $('nCityTab').textContent='广州线索量不小(529)但线转仅9.3%全场垫底；成都“质优量少”(351/15.4%)建议放大投放；上海量质双优(829/16.0%)。'; }
+  else { $('nCityTab').innerHTML=(FC?'聚焦：<b class="a2">'+FC+'</b>（点行切换/取消）。':'当前筛选下的城市明细。'); }
+}
+
+/* ---------- 事件辅助 ---------- */
+function setOrToggle(key, val){
+  if (key==='FC'){ if(allSel()) FC=val; else FC=(FC===val?'':val); }
+  if (key==='FA'){ if(allSel()) FA=val; else FA=(FA===val?'':val); }
+}
+function advClick(a){
+  if (allSel()){ advDrill=a; }
+  else { FA=(FA===a?'':a); }
+  syncSel(); runAll();
+}
+function cityRow(c){ setOrToggle('FC', c); syncSel(); runAll(); }
+function drillBack(){ advDrill=null; runAll(); }
+
+function syncSel(){
+  function setv(id,vv){ var el=$(id); el.value = el.querySelector('option[value="'+vv+'"]') ? vv : ''; }
+  setv('fCity',FC); setv('fVeh',FV); setv('fAdv',FA); setv('fWeek',FW);
+}
+function runAll(){
+  kpi(); trend(); week(); veh(); cityRank(); scat(); funn(); heat(); advRank(); cTab();
+}
+
+/* ---------- 启动 ---------- */
+(function init(){
+  function add(id,arr){ var s=$(id); arr.forEach(function(x){ var o=document.createElement('option'); o.value=x; o.textContent=x; s.appendChild(o); }); }
+  add('fCity', BID.cityList); add('fVeh', BID.vehicleList); add('fAdv', BID.advisorList); add('fWeek', ['W1','W2','W3','W4','W5']);
+  ['fCity','fVeh','fAdv','fWeek'].forEach(function(id){
+    $(id).addEventListener('change', function(){
+      FC=$('fCity').value; FV=$('fVeh').value; FA=$('fAdv').value; FW=$('fWeek').value;
+      advDrill=null; runAll();
+    });
+  });
+  $('rst').addEventListener('click', function(){ FC='';FV='';FA='';FW=''; advDrill=null; syncSel(); runAll(); });
+  runAll();
+})();
+
+</script>
+</body>
+</html>
